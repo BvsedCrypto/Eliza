@@ -312,4 +312,4 @@ Optional Twitter profile
 
 ## Defined in
 
-[packages/core/src/types.ts:601](https://github.com/ai16z/eliza/blob/main/packages/core/src/types.ts#L601)
+[packages/core/src/types.ts:601](https://github.com/amit0365/eliza/blob/main/packages/core/src/types.ts#L601)

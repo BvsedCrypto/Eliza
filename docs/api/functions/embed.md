@@ -28,4 +28,4 @@ If the API request fails
 
 ## Defined in
 
-[packages/core/src/embedding.ts:138](https://github.com/ai16z/eliza/blob/main/packages/core/src/embedding.ts#L138)
+[packages/core/src/embedding.ts:138](https://github.com/amit0365/eliza/blob/main/packages/core/src/embedding.ts#L138)

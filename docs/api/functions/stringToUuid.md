@@ -14,4 +14,4 @@
 
 ## Defined in
 
-[packages/core/src/uuid.ts:4](https://github.com/ai16z/eliza/blob/main/packages/core/src/uuid.ts#L4)
+[packages/core/src/uuid.ts:4](https://github.com/amit0365/eliza/blob/main/packages/core/src/uuid.ts#L4)
