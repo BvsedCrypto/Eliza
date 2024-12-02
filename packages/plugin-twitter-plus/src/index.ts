@@ -2,7 +2,7 @@ import { TwitterPostClient } from "./post.ts";
 import { TwitterSearchClient } from "./search.ts";
 import { TwitterInteractionClient } from "./interactions.ts";
 import { IAgentRuntime, Client, elizaLogger } from "@ai16z/eliza";
-import { validateTwitterConfig, TwitterFullConfig } from "./enviroment";
+import { validateTwitterConfig, TwitterFullConfig } from "./environment";
 import { TemplateEnhancedTwitterClient } from "./template-enhanced-client.ts";
 import { readFile } from 'fs/promises';
 import { join } from 'path';
