@@ -13,8 +13,8 @@ import {
     elizaLogger,
 } from "@ai16z/eliza";
 import { TemplateEnhancedTwitterClient } from "./template-enhanced-client.ts";
-import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 import { embeddingZeroVector } from "@ai16z/eliza";
+import { TwitterPlusClient } from "./twitter-enhanced-client.ts";
 
 // Special interactions interfaces
 export interface SpecialInteraction {
@@ -95,7 +95,7 @@ export class TwitterInteractionClient {
 
         // Clean up special interaction tracking
         for (const key in this.lastSpecialInteraction) {
-            if (this.lastSpecialInteraction[key] < oneDayAgo) {
+            if (this.lastSpecialInteraction[key] < oneDayAgo - this.specialInteractionCooldown) {
                 delete this.lastSpecialInteraction[key];
             }
         }
@@ -146,8 +146,8 @@ export class TwitterInteractionClient {
         ).tweets;
 
         return [...new Set(tweetCandidates)]
-            .sort((a, b) => a.id.localeCompare(b.id))
-            .filter((tweet) => tweet.userId !== this.client.profile.id);
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .filter((tweet) => tweet.userId !== this.client.profile.id);
     }
 
     private async processTweetCandidate(tweet: Tweet) {
@@ -183,7 +183,7 @@ export class TwitterInteractionClient {
         elizaLogger.log("Processing new tweet:", tweet.permanentUrl);
 
         const { roomId, userIdUUID } = await this.setupTweetContext(tweet);
-        const thread = await buildConversationThread(tweet, this.client);
+        const thread = await this.buildConversationThread(tweet);
 
         const message = {
             content: { text: tweet.text },

@@ -13,6 +13,8 @@ import { TemplateEnhancedTwitterClient } from "./template-enhanced-client.ts";
 import type { SpecialInteraction } from "./environment.ts";
 import { validateTwitterConfig } from "./environment.ts";
 import { sample } from 'lodash';
+import { TwitterClient } from "./twitter-client.ts";
+import { TwitterPlusClient } from "./twitter-plus-client.ts";
 
 const MAX_TWEET_LENGTH = 280;
 
@@ -53,7 +55,7 @@ function truncateToCompleteSentence(text: string): string {
 }
 
 export class TwitterPostClient {
-    private client: TemplateEnhancedTwitterClient;
+    private client: TwitterClient | TwitterPlusClient;
     private runtime: IAgentRuntime;
     private schedule: PostSchedule;
     private isPosting: boolean = false;
@@ -61,7 +63,7 @@ export class TwitterPostClient {
     private specialInteractions: Record<string, SpecialInteraction> = {};
     private specialInteractionCooldown: number = 24 * 60 * 60 * 1000;
 
-    constructor(client: TemplateEnhancedTwitterClient, runtime: IAgentRuntime) {
+    constructor(client: TwitterClient | TwitterPlusClient, runtime: IAgentRuntime) {
         this.client = client;
         this.runtime = runtime;
 

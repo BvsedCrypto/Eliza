@@ -4,13 +4,17 @@ import { z } from "zod";
 // Base Twitter configuration schema
 export const twitterEnvSchema = z.object({
     TWITTER_DRY_RUN: z
-        .string()
-        .transform((val) => val.toLowerCase() === "true"),
+    .string()
+    .transform((val) => val.toLowerCase() === "true"),
     TWITTER_USERNAME: z.string().min(1, "Twitter username is required"),
     TWITTER_PASSWORD: z.string().min(1, "Twitter password is required"),
     TWITTER_EMAIL: z.string().email("Valid Twitter email is required"),
     TWITTER_COOKIES: z.string().optional(),
     TWITTER_2FA_SECRET: z.string().optional(),
+    TWITTER_USE_PLUS: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
 });
 
 // Posting behavior configuration
@@ -81,6 +85,7 @@ export async function validateTwitterConfig(
                 TWITTER_EMAIL: runtime.getSetting("TWITTER_EMAIL") || process.env.TWITTER_EMAIL,
                 TWITTER_COOKIES: runtime.getSetting("TWITTER_COOKIES") || process.env.TWITTER_COOKIES,
                 TWITTER_2FA_SECRET: runtime.getSetting("TWITTER_2FA_SECRET") || process.env.TWITTER_2FA_SECRET,
+                TWITTER_USE_PLUS: runtime.getSetting("TWITTER_USE_PLUS") || process.env.TWITTER_USE_PLUS,
             },
             posting: {
                 POST_INTERVAL_MIN: parseInt(runtime.getSetting("POST_INTERVAL_MIN") || "90"),
@@ -119,8 +124,8 @@ export async function validateTwitterConfig(
     } catch (error) {
         if (error instanceof z.ZodError) {
             const errorMessages = error.errors
-                .map((err) => `${err.path.join(".")}: ${err.message}`)
-                .join("\n");
+            .map((err) => `${err.path.join(".")}: ${err.message}`)
+            .join("\n");
             throw new Error(
                 `Twitter configuration validation failed:\n${errorMessages}`
             );
@@ -138,7 +143,8 @@ export function getDefaultConfig(): TwitterFullConfig {
             TWITTER_PASSWORD: "",
             TWITTER_EMAIL: "",
             TWITTER_COOKIES: undefined,
-            TWITTER_2FA_SECRET: undefined
+            TWITTER_2FA_SECRET: undefined,
+            TWITTER_USE_PLUS: false
         },
         posting: {
             POST_INTERVAL_MIN: 90,
