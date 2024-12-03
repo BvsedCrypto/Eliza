@@ -5,6 +5,7 @@ import { DirectClientInterface } from "@ai16z/client-direct";
 import { DiscordClientInterface } from "@ai16z/client-discord";
 import { TelegramClientInterface } from "@ai16z/client-telegram";
 import { TwitterClientInterface } from "@ai16z/client-twitter";
+import { DevaClientInterface } from "@ai16z/client-deva";
 import {
     AgentRuntime,
     CacheManager,
@@ -320,6 +321,11 @@ export async function initializeClients(
     if (clientTypes.includes("twitter")) {
         const twitterClients = await TwitterClientInterface.start(runtime);
         clients.push(twitterClients);
+    }
+
+    if (clientTypes.includes("deva")) {
+        const devaClients = await DevaClientInterface.start(runtime);
+        clients.push(devaClients);
     }
 
     if (character.plugins?.length > 0) {
