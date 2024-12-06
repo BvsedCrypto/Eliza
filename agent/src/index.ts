@@ -17,12 +17,12 @@ import {
     IDatabaseAdapter,
     IDatabaseCacheAdapter,
     ModelProviderName,
-    defaultCharacter,
     elizaLogger,
     settings,
     stringToUuid,
     validateCharacterConfig,
 } from "@ai16z/eliza";
+import { defaultCharacter } from './character/default';
 import { zgPlugin } from "@ai16z/plugin-0g";
 import { goatPlugin } from "@ai16z/plugin-goat";
 import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
@@ -102,6 +102,21 @@ export async function loadCharacters(
         for (const characterPath of characterPaths) {
             let content = null;
             let resolvedPath = "";
+
+            // Check if the path is a TypeScript file
+            if (characterPath.endsWith('.ts')) {
+                try {
+                    const characterModule = await import(path.resolve(__dirname, characterPath));
+                    const character = characterModule.PhilosopherCharacter; // Adjust based on export
+                    validateCharacterConfig(character);
+                    loadedCharacters.push(character);
+                    elizaLogger.info(`Successfully loaded character from: ${characterPath}`);
+                    continue;
+                } catch (e) {
+                    elizaLogger.error(`Error loading TypeScript character from ${characterPath}: ${e}`);
+                    process.exit(1);
+                }
+            }
 
             // Try different path resolutions in order
             const pathsToTry = [
@@ -272,29 +287,51 @@ export function getTokenForProvider(
 function initializeDatabase(dataDir: string) {
     if (process.env.POSTGRES_URL) {
         elizaLogger.info("Initializing PostgreSQL connection...");
+
+        // Parse the connection string and add SSL params
+        const baseUrl = process.env.POSTGRES_URL.split('?')[0];
+        const finalConnectionString = `${baseUrl}?sslmode=no-verify`;
+
         const db = new PostgresDatabaseAdapter({
-            connectionString: process.env.POSTGRES_URL,
+            connectionString: finalConnectionString,
+            ssl: {
+                rejectUnauthorized: false,
+                checkServerIdentity: () => undefined
+            },
             parseInputs: true,
+            poolConfig: {
+                max: 20, // Connection pool size
+                idleTimeoutMillis: 30000,
+                connectionTimeoutMillis: 5000
+            }
         });
 
-        // Test the connection
-        db.init()
-            .then(() => {
-                elizaLogger.success(
-                    "Successfully connected to PostgreSQL database"
-                );
-            })
-            .catch((error) => {
-                elizaLogger.error("Failed to connect to PostgreSQL:", error);
-            });
+        // Test connection with retry logic
+        const testConnection = async (retries = 3) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    await db.init();
+                    elizaLogger.success("Successfully connected to PostgreSQL database");
+                    return;
+                } catch (error) {
+                    if (i === retries - 1) {
+                        elizaLogger.error("Failed to connect to PostgreSQL:", error);
+                        throw error;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                }
+            }
+        };
+
+        testConnection().catch(error => {
+            elizaLogger.error("Database connection failed after retries:", error);
+        });
 
         return db;
     } else {
-        const filePath =
-            process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
-        // ":memory:";
-        const db = new SqliteDatabaseAdapter(new Database(filePath));
-        return db;
+        elizaLogger.info("Using SQLite database");
+        const filePath = process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
+        return new SqliteDatabaseAdapter(new Database(filePath));
     }
 }
 

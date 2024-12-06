@@ -603,6 +603,66 @@ export enum Clients {
     TWITTER = "twitter",
     TELEGRAM = "telegram",
 }
+
+export enum CharacterMode {
+    PHILOSOPHER = 'philosopher',
+    SCIENTIST = 'scientist',
+    ARTIST = 'artist',
+}
+
+export enum MoodType {
+    Contemplative = 'contemplative',
+    Analytical = 'analytical',
+    Curious = 'curious',
+}
+
+// Add the new interfaces
+export interface TraitRelationships {
+    base: {
+        cognitive: string[];
+        style: string[];
+        topics: string[];
+        adjectives: string[];
+    };
+}
+
+export interface CharacterState {
+    currentMood: MoodType;
+    activeTraits: string[];
+    evolvedTraits: string[];
+    knowledge?: Record<string, string>;
+}
+
+export interface TemplateCondition {
+    mode: CharacterMode;
+    triggers: {
+        keywords?: string[];
+        traits?: string[];
+        moods?: MoodType[];
+        evolution?: {
+            requiredTraits: string[];
+            threshold?: number;
+        };
+    };
+}
+
+export interface TemplateRoute {
+    template: string;
+    conditions: TemplateCondition[];
+    priority: number;
+}
+
+export interface TemplateState extends State {
+    traits: {
+        active: string[];
+        enhanced: string[];
+        evolved: string[];
+    };
+    mood: {
+        type: MoodType;
+    };
+}
+
 /**
  * Configuration for an agent character
  */
@@ -628,6 +688,11 @@ export type Character = {
     /** Optional model endpoint override */
     modelEndpointOverride?: string;
 
+    mode?: CharacterMode;
+    templateRouter?: Partial<Record<CharacterMode, TemplateRoute[]>>;
+    traitRelationships?: TraitRelationships;
+    state?: CharacterState;
+
     /** Optional prompt templates */
     templates?: {
         goalsTemplate?: string;
@@ -648,25 +713,33 @@ export type Character = {
         discordVoiceHandlerTemplate?: string;
         discordShouldRespondTemplate?: string;
         discordMessageHandlerTemplate?: string;
+
+        // New template format
+        base?: {
+            [key: string]: string;
+        };
+        evolved?: {
+        [key: string]: string;
+    };
     };
 
     /** Character biography */
-    bio: string | string[];
+    bio?: string | string[];
 
     /** Character background lore */
-    lore: string[];
+    lore?: string[];
 
     /** Example messages */
-    messageExamples: MessageExample[][];
+    messageExamples?: MessageExample[][];
 
     /** Example posts */
-    postExamples: string[];
+    postExamples?: string[];
 
     /** Known topics */
-    topics: string[];
+    topics?: string[];
 
     /** Character traits */
-    adjectives: string[];
+    adjectives?: string[];
 
     /** Optional knowledge base */
     knowledge?: string[];
@@ -716,7 +789,7 @@ export type Character = {
     };
 
     /** Writing style guides */
-    style: {
+    style?: {
         all: string[];
         chat: string[];
         post: string[];

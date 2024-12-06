@@ -119,11 +119,37 @@ CREATE TABLE IF NOT EXISTS  cache (
     PRIMARY KEY ("key", "agentId")
 );
 
+CREATE TABLE IF NOT EXISTS knowledge (
+    "id" UUID PRIMARY KEY,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    "type" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "metadata" JSONB DEFAULT '{}'::jsonb,
+    "embedding" vector(1536),
+    "agentId" UUID REFERENCES accounts("id"),
+    CONSTRAINT fk_agent FOREIGN KEY ("agentId") REFERENCES accounts("id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS traits (
+    "id" UUID PRIMARY KEY,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    "type" TEXT NOT NULL,
+    "agentId" UUID REFERENCES accounts("id"),
+    "traits" JSONB NOT NULL,
+    "embedding" vector(1536),
+    CONSTRAINT fk_agent FOREIGN KEY ("agentId") REFERENCES accounts("id") ON DELETE CASCADE
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_memories_embedding ON memories USING hnsw ("embedding" vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS idx_memories_type_room ON memories("type", "roomId");
 CREATE INDEX IF NOT EXISTS idx_participants_user ON participants("userId");
 CREATE INDEX IF NOT EXISTS idx_participants_room ON participants("roomId");
 CREATE INDEX IF NOT EXISTS idx_relationships_users ON relationships("userA", "userB");
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_embedding ON knowledge USING hnsw ("embedding" vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS idx_knowledge_type ON knowledge("type");
+CREATE INDEX IF NOT EXISTS idx_traits_embedding ON traits USING hnsw ("embedding" vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS idx_traits_type ON traits("type", "agentId");
 
 COMMIT;

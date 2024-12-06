@@ -1,4 +1,4 @@
-# @ai16z/eliza v0.1.4-alpha.3
+# @ai16z/eliza v0.1.5-alpha.3
 
 ## Enumerations
 
@@ -6,6 +6,8 @@
 - [ModelClass](enumerations/ModelClass.md)
 - [ModelProviderName](enumerations/ModelProviderName.md)
 - [Clients](enumerations/Clients.md)
+- [CharacterMode](enumerations/CharacterMode.md)
+- [MoodType](enumerations/MoodType.md)
 - [ServiceType](enumerations/ServiceType.md)
 - [LoggingLevel](enumerations/LoggingLevel.md)
 
@@ -41,6 +43,11 @@
 - [Account](interfaces/Account.md)
 - [Participant](interfaces/Participant.md)
 - [Room](interfaces/Room.md)
+- [TraitRelationships](interfaces/TraitRelationships.md)
+- [CharacterState](interfaces/CharacterState.md)
+- [TemplateCondition](interfaces/TemplateCondition.md)
+- [TemplateRoute](interfaces/TemplateRoute.md)
+- [TemplateState](interfaces/TemplateState.md)
 - [IDatabaseAdapter](interfaces/IDatabaseAdapter.md)
 - [IDatabaseCacheAdapter](interfaces/IDatabaseCacheAdapter.md)
 - [IMemoryManager](interfaces/IMemoryManager.md)

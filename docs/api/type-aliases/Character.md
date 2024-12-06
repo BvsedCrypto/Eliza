@@ -1,4 +1,4 @@
-[@ai16z/eliza v0.1.4-alpha.3](../index.md) / Character
+[@ai16z/eliza v0.1.5-alpha.3](../index.md) / Character
 
 # Type Alias: Character
 
@@ -128,39 +128,57 @@ Optional prompt templates
 
 > `optional` **discordMessageHandlerTemplate**: `string`
 
-### bio
+### templates.base?
 
-> **bio**: `string` \| `string`[]
+> `optional` **base**: `object`
+
+New template format
+
+#### Index Signature
+
+ \[`key`: `string`\]: `string`
+
+### templates.evolved?
+
+> `optional` **evolved**: `object`
+
+#### Index Signature
+
+ \[`key`: `string`\]: `string`
+
+### bio?
+
+> `optional` **bio**: `string` \| `string`[]
 
 Character biography
 
-### lore
+### lore?
 
-> **lore**: `string`[]
+> `optional` **lore**: `string`[]
 
 Character background lore
 
-### messageExamples
+### messageExamples?
 
-> **messageExamples**: [`MessageExample`](../interfaces/MessageExample.md)[][]
+> `optional` **messageExamples**: [`MessageExample`](../interfaces/MessageExample.md)[][]
 
 Example messages
 
-### postExamples
+### postExamples?
 
-> **postExamples**: `string`[]
+> `optional` **postExamples**: `string`[]
 
 Example posts
 
-### topics
+### topics?
 
-> **topics**: `string`[]
+> `optional` **topics**: `string`[]
 
 Known topics
 
-### adjectives
+### adjectives?
 
-> **adjectives**: `string`[]
+> `optional` **adjectives**: `string`[]
 
 Character traits
 
@@ -296,9 +314,9 @@ Optional client-specific config
 
 > `optional` **shouldIgnoreDirectMessages**: `boolean`
 
-### style
+### style?
 
-> **style**: `object`
+> `optional` **style**: `object`
 
 Writing style guides
 
@@ -342,4 +360,4 @@ Optional Twitter profile
 
 ## Defined in
 
-[packages/core/src/types.ts:607](https://github.com/ai16z/eliza/blob/main/packages/core/src/types.ts#L607)
+[packages/core/src/types.ts:669](https://github.com/f58637547/agentf/blob/main/packages/core/src/types.ts#L669)
