@@ -40,6 +40,7 @@ import { createNodePlugin } from "@ai16z/plugin-node";
 import { solanaPlugin } from "@ai16z/plugin-solana";
 import { aptosPlugin, TransferAptosToken } from "@ai16z/plugin-aptos";
 import { teePlugin } from "@ai16z/plugin-tee";
+import { avalanchePlugin } from "@ai16z/plugin-avalanche";
 import Database from "better-sqlite3";
 import fs from "fs";
 import path from "path";
@@ -393,6 +394,7 @@ export function createAgent(
             getSecret(character, "COINBASE_PRIVATE_KEY")
                 ? [coinbaseMassPaymentsPlugin, tradePlugin, tokenContractPlugin]
                 : []),
+            getSecret(character, "AVALANCHE_PRIVATE_KEY") ? avalanchePlugin : null,
             getSecret(character, "WALLET_SECRET_SALT") ? teePlugin : null,
             getSecret(character, "ALCHEMY_API_KEY") ? goatPlugin : null,
             getSecret(character, "APTOS_PRIVATE_KEY") ? aptosPlugin : null,
